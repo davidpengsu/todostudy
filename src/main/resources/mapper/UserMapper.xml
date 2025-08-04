@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.todostudy.user.mapper.UserMapper">
+
+    <insert id="save" parameterType="com.todostudy.user.domain.User">
+        INSERT INTO user (user_id, user_name, password, reg_date, last_lgn_time, role, del_yn)
+        VALUES (#{userId}, #{userName}, #{password}, #{regDate}, #{lastLgnTime}, #{role}, #{delYn})
+    </insert>
+
+    <select id="findByUserId" parameterType="string" resultType="com.todostudy.user.domain.User">
+        SELECT id, user_id, user_name, password, reg_date, last_lgn_time, role, del_yn
+        FROM user
+        WHERE user_id = #{userId}
+    </select>
+</mapper>
