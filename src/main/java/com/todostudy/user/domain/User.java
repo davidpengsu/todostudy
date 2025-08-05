@@ -2,10 +2,11 @@ package com.todostudy.user.domain;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@Data
+@Getter
 public class User {
     private Long id;
     private String userId;

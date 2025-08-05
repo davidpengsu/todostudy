@@ -7,4 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserMapper {
     //가입자 데베저장
     void save(User user);
+
+    //조회
+    User findByUserId(String userId);
 }
