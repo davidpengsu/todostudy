@@ -1,18 +1,15 @@
 package com.todostudy.user.service;
 
-import com.todostudy.user.domain.User;
-import com.todostudy.user.dto.UserJoinRequestDto;
-import com.todostudy.user.dto.UserLoginRequestDto;
-import com.todostudy.user.mapper.LoginLogMapper;
+import com.todostudy.cmn.ObjResVO;
 import com.todostudy.user.mapper.UserMapper;
+import com.todostudy.user.vo.TokenResVO;
+import com.todostudy.user.vo.UserVO;
 import com.todostudy.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 //로그찍기위함
-import com.todostudy.user.dto.LoginLogDto;
-import com.todostudy.user.mapper.LoginLogMapper;
 
 import java.time.LocalDateTime;
 
@@ -22,50 +19,50 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final LoginLogMapper loginLogMapper;
 
-    public void join (UserJoinRequestDto requestDto) {
-        //todo: 회원가입로직구현
-        User user = User.builder()
-                .userId(requestDto.getUserId())
-                .userName(requestDto.getUserName())
-                .password(passwordEncoder.encode(requestDto.getPassword()))
-                .role("ROLE_USER")
-                .delYn("N")
-                .regDate(LocalDateTime.now().toString())
-                .lastLgnTime(LocalDateTime.now().toString())
-                .build();
+    public ObjResVO<Integer> join (final UserVO userVO) {
+        UserVO user = new UserVO();
+
+        user.setUserId(userVO.getUserId());
+        user.setName(userVO.getName());
+        user.setPassword(passwordEncoder.encode(userVO.getPassword()));
+        user.setRole("ROLE_USER");
+        user.setDelYn("N");
+
+        user.setRegDate(LocalDateTime.now().toString());
+        user.setLastLgnTime(LocalDateTime.now().toString());
+
         userMapper.save(user);
+
+        return ObjResVO.<Integer>builder()
+                .message(1)
+                .build();
     }
 
     //로그인
-    public String login(UserLoginRequestDto requestDto) {
-        User user = userMapper.findByUserId(requestDto.getUserId());
-        String loginIP = "127.0.0.1"; //todo 실제 아이피 수집하기
+    public TokenResVO login(final UserVO userVO) {
+        UserVO user = userMapper.findByUserId(userVO);
 
         if (user == null) {
-            insertLoginLog(requestDto.getUserId(), loginIP, "FAIL");
-            throw new IllegalArgumentException("아이디가 존재안함");
+
+            return TokenResVO.builder()
+                    .message("이미 존재 하는 아이디 입니다.")
+                    .build();
         }
-        //비번
-        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
-            insertLoginLog(requestDto.getUserId(), loginIP, "FAIL");
-            throw new IllegalArgumentException("비번틀림");
+
+        if (!passwordEncoder.matches(userVO.getPassword(), user.getPassword())) {
+            return TokenResVO.builder()
+                    .message("비밀번호 또는 아이디가 잘못되었습니다.")
+                    .build();
         }
-        //토큰던지기
-        insertLoginLog(requestDto.getUserId(), loginIP, "success");
-        return jwtUtil.generateToken(user.getUserId());
+
+        return TokenResVO.builder()
+                .message("로그인을 성공하였습니다")
+                .token(jwtUtil.generateToken(user.getUserId()))
+                .build();
+
     }
 
-    private void insertLoginLog(String userId, String ip, String stats) {
-        LoginLogDto logDto = LoginLogDto.builder()
-                .userId(userId)
-                .lgnIpAddr(ip)
-                .stats(stats)
-                .regDate(LocalDateTime.now())
-                .build();
-        loginLogMapper.insertLog(logDto);
-    }
 
 }
 

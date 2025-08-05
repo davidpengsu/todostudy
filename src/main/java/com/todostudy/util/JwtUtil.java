@@ -1,53 +1,71 @@
 package com.todostudy.util;
 
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
-import java.security.Security;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-@Slf4j
 @Component
 public class JwtUtil {
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    private static final String SECRET_KEY_STRING = "your-secret-key-must-be-at-least-256-bits-long-for-HS256-algorithm";
+    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
+    private static final String ISSUER = "your-issuer";
+    private static final long EXPIRATION_TIME = 3600000;
 
+    /**
+     * 토큰을 발행한다.
+     * @param userId 유저 아이디
+     * @return 토큰
+     */
     public String generateToken(String userId) {
-        long now = System.currentTimeMillis();
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
+
+
         return Jwts.builder()
                 .setSubject(userId)
-                .setIssuedAt(new Date(now))
-                .setExpiration(new Date(now + 3600000))
-                .signWith(key)
+                .setIssuer(ISSUER)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    //JWT 토큰 검증
-    public boolean validateToken(String token) {
+    public int validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        } catch (SecurityException e) {
-            log.info("Invalid JWT signature");
-        } catch (MalformedJwtException e) {
-            log.info("Invalid JWT token");
-        } catch (UnsupportedJwtException e ) {
-            log.info("JWT token is not supported");
-        } catch (IllegalArgumentException e) {
-            log.info("JWT claims string is empty.");
+            Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY)
+                    .requireIssuer(ISSUER)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return 1;
+        } catch (ExpiredJwtException e) {
+            return 2;
+        } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
+            return 3;
         }
-        return false;
     }
 
     public String getUserIdFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody().getSubject();
     }
 
+    public String extractTokenFromHeader(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
 
+        String token = null;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        }
+
+        return token;
+    }
 }

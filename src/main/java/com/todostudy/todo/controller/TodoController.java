@@ -1,11 +1,12 @@
 package com.todostudy.todo.controller;
 
-import com.todostudy.todo.domain.Todo;
-import com.todostudy.todo.dto.TodoCreateRequestDto;
+import com.todostudy.cmn.ObjResVO;
 import com.todostudy.todo.service.TodoService;
+import com.todostudy.todo.vo.TodoVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/todos")
 @RequiredArgsConstructor
 public class TodoController {
-
     private final TodoService todoService;
 
     @PostMapping
-    public ResponseEntity<Todo> createTodo(@RequestBody TodoCreateRequestDto requestDto) {
-        //todo: jwt토큰에서 유저아이디 가져오는거 구현하기
-        String userId = "testuser";
-        Todo createdTodo = todoService.createTodo(userId, requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTodo);
+    public ResponseEntity<ObjResVO<Integer>> registerTodo(@RequestBody TodoVO todoVO) {
+        //유저아이디 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userID = (String) authentication.getPrincipal();
+        //전달
+        return ResponseEntity.ok(todoService.register(todoVO, userID));
     }
 }

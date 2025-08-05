@@ -1,13 +1,13 @@
 package com.todostudy.user.mapper;
 
-import com.todostudy.user.domain.User;
+import com.todostudy.user.vo.UserVO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface UserMapper {
     //가입자 데베저장
-    void save(User user);
+    void save(UserVO user);
 
     //조회
-    User findByUserId(String userId);
+    UserVO findByUserId(UserVO user);
 }

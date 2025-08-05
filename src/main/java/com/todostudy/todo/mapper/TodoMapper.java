@@ -1,9 +1,9 @@
 package com.todostudy.todo.mapper;
 
-import com.todostudy.todo.domain.Todo;
+import com.todostudy.todo.vo.TodoVO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface TodoMapper {
-    void insertTodo(Todo todo);
+    void savetodo(TodoVO todoVO);
 }

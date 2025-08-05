@@ -4,10 +4,20 @@
 
 <mapper namespace="com.todostudy.todo.mapper.TodoMapper">
 
-    <insert id="insertTodo" parameterType="com.todostudy.todo.domain.Todo"
-            useGeneratedKeys="true" keyProperty="idx">
-        INSERT INTO t_todo (userId, content, regDate, expDate, delYn)
-        VALUES (#{userId}, #{content}, #{regDate}, #{expDate}, #{delYn})
+    <insert id="savetodo" parameterType="com.todostudy.todo.vo.TodoVO" useGeneratedKeys="true" keyProperty="idx">
+        INSERT INTO t_todo (
+            userId,
+            content,
+            regDate,
+            expDate,
+            delYn
+        ) VALUES (
+                     #{userId},
+                     #{content},
+                     #{regDate},
+                     #{expDate},
+                     #{delYn}
+                 )
     </insert>
 
 </mapper>

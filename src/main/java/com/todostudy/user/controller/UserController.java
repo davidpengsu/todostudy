@@ -1,8 +1,9 @@
 package com.todostudy.user.controller;
 
-import com.todostudy.user.dto.UserJoinRequestDto;
-import com.todostudy.user.dto.UserLoginRequestDto;
+import com.todostudy.cmn.ObjResVO;
 import com.todostudy.user.service.UserService;
+import com.todostudy.user.vo.TokenResVO;
+import com.todostudy.user.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,15 +19,14 @@ public class UserController {
 
     //가입
     @PostMapping("/join")
-    public ResponseEntity<Void> join(@RequestBody UserJoinRequestDto requestDto) {
-        userService.join(requestDto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ObjResVO<Integer>> join(@RequestBody UserVO userVO) {
+        return ResponseEntity.ok(userService.join(userVO));
     }
 
     //로그인
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginRequestDto requestDto) {
-        String token = userService.login(requestDto);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<TokenResVO> login(@RequestBody UserVO userVO) {
+        TokenResVO entity = userService.login(userVO);
+        return ResponseEntity.ok(entity);
     }
 }

@@ -4,14 +4,15 @@
 
 <mapper namespace="com.todostudy.user.mapper.UserMapper">
 
-    <insert id="save" parameterType="com.todostudy.user.domain.User">
+    <insert id="save" parameterType="com.todostudy.user.vo.UserVO">
         INSERT INTO t_users (UserID, UserName, password, regDate, LastLgnTime, role, delYn)
-        VALUES (#{userId}, #{userName}, #{password}, #{regDate}, #{lastLgnTime}, #{role}, #{delYn})
+        VALUES (#{userId}, #{name}, #{password}, #{regDate}, #{lastLgnTime}, #{role}, #{delYn})
     </insert>
 
-    <select id="findByUserId" parameterType="string" resultType="com.todostudy.user.domain.User">
-        SELECT UserID, UserName, password, regDate, LastLgnTime, role, delYn
+    <select id="findByUserId" parameterType="string" resultType="com.todostudy.user.vo.UserVO">
+        SELECT UserID as userId, UserName as name, password as password, regDate as regDate, LastLgnTime as lastLgnTime, role as role, delYn as delYn
         FROM t_users
         WHERE UserID = #{userId}
     </select>
+
 </mapper>
