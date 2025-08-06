@@ -1,5 +1,6 @@
 package com.todostudy.todo.service;
 
+import com.todostudy.cmn.ListResVO;
 import com.todostudy.cmn.ObjResVO;
 import com.todostudy.todo.mapper.TodoMapper;
 import com.todostudy.todo.vo.TodoVO;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +24,33 @@ public class TodoService {
         todoMapper.savetodo(todoVO);
         return ObjResVO.<Integer>builder()
                 .message(1) //성공하면 1 뱉기
+                .build();
+    }
+
+    public ListResVO<TodoVO> getTodoList(String userId) {
+        List<TodoVO> todoList = todoMapper.findByUserId(userId);
+
+        return ListResVO.<TodoVO>builder()
+                .size(todoList.size())
+                .datas(todoList)
+                .build();
+    }
+
+    public ObjResVO<Integer> updateTodo(TodoVO todoVO, String userId) {
+        todoVO.setUserId(userId);
+        todoMapper.updateTodo(todoVO);
+        return ObjResVO.<Integer>builder()
+                .message(1)
+                .build();
+    }
+
+    public ObjResVO<Integer> deleteTodo(TodoVO todoVO, String userId) {
+        todoVO.setUserId(userId);
+        todoVO.setDelYn("Y");
+        todoMapper.deleteTodo(todoVO);
+
+        return ObjResVO.<Integer>builder()
+                .message(1)
                 .build();
     }
 }

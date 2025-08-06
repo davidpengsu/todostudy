@@ -19,5 +19,34 @@
                      #{delYn}
                  )
     </insert>
+    <select id="findByUserId" resultType="com.todostudy.todo.vo.TodoVO">
+        SELECT
+            idx,
+            userId,
+            content,
+            regDate,
+            expDate,
+            delYn
+        FROM
+            t_todo
+        WHERE
+            userId = #{userId} AND delYn = 'N'
+        ORDER BY idx DESC
+    </select>
+    <update id="updateTodo" parameterType="com.todostudy.todo.vo.TodoVO">
+        UPDATE t_todo
+        SET
+            content = #{content},
+            expDate = #{expDate}
+        WHERE
+            idx = #{idx} AND userId = #{userId} AND delYn = 'N'
+    </update>
+    <update id="deleteTodo" parameterType="com.todostudy.todo.vo.TodoVO">
+        UPDATE t_todo
+        SET
+            delYn = 'Y'
+        WHERE
+            idx = #{idx} AND userId = #{userId}
+    </update>
 
 </mapper>
