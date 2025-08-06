@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.todostudy.children.mapper.ChildrenMapper">
+
+    <insert id="save" parameterType="com.todostudy.children.vo.ChildrenVO" useGeneratedKeys="true" keyProperty="idx">
+        INSERT INTO t_children (
+            userId,
+            name,
+            birthdate,
+            regDate,
+            delYn
+        ) VALUES (
+                     #{userId},
+                     #{name},
+                     #{birthdate},
+                     #{regDate},
+                     #{delYn}
+                 )
+    </insert>
+
+    <select id="findByUserId" resultType="com.todostudy.children.vo.ChildrenVO">
+        SELECT
+            idx,
+            userId,
+            name,
+            birthdate,
+            regDate,
+            delYn
+        FROM
+            t_children
+        WHERE
+            userId = #{userId} AND delYn = 'N'
+        ORDER BY idx DESC
+    </select>
+
+    <update id="update" parameterType="com.todostudy.children.vo.ChildrenVO">
+        UPDATE t_children
+        SET
+            name = #{name},
+            birthdate = #{birthdate}
+        WHERE
+            idx = #{idx} AND userId = #{userId} AND delYn = 'N'
+    </update>
+
+    <update id="delete" parameterType="com.todostudy.children.vo.ChildrenVO">
+        UPDATE t_children
+        SET
+            delYn = 'Y'
+        WHERE
+            idx = #{idx} AND userId = #{userId}
+    </update>
+
+</mapper>
