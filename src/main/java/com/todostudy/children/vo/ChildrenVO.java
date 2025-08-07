@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.todostudy.children.vo.ValidationGroup;
 
 
 @Setter
@@ -18,12 +19,10 @@ public class ChildrenVO {
     private String regDate;
     private String delYn;
 
-    //자녀이름공백x
-    @NotBlank(message = "자녀이름필수임")
+    @NotBlank(message = "자녀이름필수임", groups = {ValidationGroup.Register.class, ValidationGroup.Register.class})
     private String name;
 
-    //생일
-    @NotBlank(message = "생일도입력필수임")
+    @NotBlank(message = "생일도입력필수임", groups = {ValidationGroup.Update.class, ValidationGroup.Register.class})
     private String birthdate;
 
 }

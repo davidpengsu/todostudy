@@ -18,14 +18,14 @@ public class ChildrenService {
     private final ChildrenMapper childrenMapper;
 
     //등록하는거
-    public ObjResVO<Integer> register(ChildrenVO childrenVO, String userId) {
+    public ObjResVO<String> register(ChildrenVO childrenVO, String userId) {
         childrenVO.setUserId(userId);
         childrenVO.setRegDate(LocalDateTime.now().toString());
         childrenVO.setDelYn("N");
         System.out.println("ㅇㅇㅇㅇ");
         childrenMapper.save(childrenVO);
-        return ObjResVO.<Integer>builder()
-                .message(1)
+        return ObjResVO.<String >builder()
+                .message("칠드런등록됨!")
                 .build();
     }
 
@@ -44,20 +44,28 @@ public class ChildrenService {
 
         int updatedRows = childrenMapper.update(childrenVO);
         if (updatedRows == 0){
-            return ObjResVO.<Integer>builder().message(0).build();
+            return ObjResVO.<Integer>builder()
+                    .message(0)
+                    .build();
         }
-        return ObjResVO.<Integer>builder().message(1).build();
+        return ObjResVO.<Integer>builder()
+                .message(1)
+                .build();
     }
 
-    //자녀정보딜리트
-    public ObjResVO<Integer> deleteChildren(ChildrenVO childrenVO, String userId) {
-        childrenVO.setUserId(userId);
-        int updatedRows = childrenMapper.update(childrenVO);
-        if (updatedRows == 0){
-            return ObjResVO.<Integer>builder().message(0).build();
-        }
 
+    //자녀정보딜리트
+    public ObjResVO<Integer> deleteChild(ChildrenVO childrenVO, String userId) {
+        childrenVO.setUserId(userId);
+        int updatedRows = childrenMapper.delete(childrenVO);
+        if (updatedRows == 0){
+            return ObjResVO.<Integer>builder()
+                    .message(0)
+                    .build();
+        }
         childrenVO.setDelYn("Y");
-        return ObjResVO.<Integer>builder().message(1).build();
+        return ObjResVO.<Integer>builder()
+                .message(1)
+                .build();
     }
 }

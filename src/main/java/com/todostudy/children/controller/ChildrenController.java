@@ -4,12 +4,16 @@ import com.todostudy.children.service.ChildrenService;
 import com.todostudy.children.vo.ChildrenVO;
 import com.todostudy.cmn.ListResVO;
 import com.todostudy.cmn.ObjResVO;
+import com.todostudy.user.vo.UserVO;
+import com.todostudy.children.vo.ValidationGroup;
 import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,11 +27,12 @@ public class ChildrenController {
 
     //등록하는거
     @PostMapping("/register")
-    public ResponseEntity<ObjResVO<Integer>> registerChildren(@RequestBody @Valid ChildrenVO childrenVO) {
+    public ResponseEntity<ObjResVO<String>> registerChildren(@RequestBody @Validated({ValidationGroup.Register.class, Default.class}) ChildrenVO childrenVO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = (String) authentication.getPrincipal();
         return ResponseEntity.ok(childrenService.register(childrenVO, userId));
     }
+
 
     //리스트확인
     @PostMapping("/list")
@@ -38,9 +43,10 @@ public class ChildrenController {
 
     }
 
+
     //수정
     @PostMapping("/update")
-    public ResponseEntity<ObjResVO<String>> updateChild(@RequestBody ChildrenVO childrenVO) {
+    public ResponseEntity<ObjResVO<String>> updateChild(@RequestBody @Validated ({ValidationGroup.Update.class, Default.class}) ChildrenVO childrenVO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = (String) authentication.getPrincipal();
 
@@ -62,7 +68,7 @@ public class ChildrenController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = (String) authentication.getPrincipal();
 
-        ObjResVO<Integer> serviceResult = childrenService.updateChild(childrenVO, userId);
+        ObjResVO<Integer> serviceResult = childrenService.deleteChild(childrenVO, userId);
         if (serviceResult.getMessage() == 1){
             return ResponseEntity.ok(ObjResVO.<String>builder().message("삭제된거임").build());
         } else {
