@@ -19,9 +19,19 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public ObjResVO<Integer> join (final UserVO userVO) {
-        UserVO user = new UserVO();
+    public ObjResVO<String> join (final UserVO userVO) {
 
+        //아이디중복확인
+        UserVO existUser = userMapper.findByUserId(userVO);
+        if (existUser != null) {
+            //이미존재하는지확인
+            return ObjResVO.<String>builder()
+                    .message("이미있는아이디")
+                    .build();
+        }
+
+        //정상가입
+        UserVO user = new UserVO();
         user.setUserId(userVO.getUserId());
         user.setName(userVO.getName());
         user.setPassword(passwordEncoder.encode(userVO.getPassword()));
@@ -33,8 +43,8 @@ public class UserService {
 
         userMapper.save(user);
 
-        return ObjResVO.<Integer>builder()
-                .message(1)
+        return ObjResVO.<String>builder()
+                .message("가입함")
                 .build();
     }
 
@@ -45,7 +55,7 @@ public class UserService {
         if (user == null) {
 
             return TokenResVO.builder()
-                    .message("이미 존재 하는 아이디 입니다.")
+                    .message("존재하지 않는 아이디임")
                     .build();
         }
 

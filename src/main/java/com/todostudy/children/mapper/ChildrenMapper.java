@@ -9,6 +9,6 @@ import java.util.List;
 public interface ChildrenMapper {
     void save(ChildrenVO childrenVO);
     List<ChildrenVO> findByUserId(String userId);
-    void update(ChildrenVO childrenVO);
-    void delete(ChildrenVO childrenVO);
+    int update(ChildrenVO childrenVO);
+    int delete(ChildrenVO childrenVO);
 }

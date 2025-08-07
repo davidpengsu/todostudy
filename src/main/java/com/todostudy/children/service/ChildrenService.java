@@ -6,10 +6,12 @@ import com.todostudy.cmn.ListResVO;
 import com.todostudy.cmn.ObjResVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class ChildrenService {
@@ -20,6 +22,7 @@ public class ChildrenService {
         childrenVO.setUserId(userId);
         childrenVO.setRegDate(LocalDateTime.now().toString());
         childrenVO.setDelYn("N");
+        System.out.println("ㅇㅇㅇㅇ");
         childrenMapper.save(childrenVO);
         return ObjResVO.<Integer>builder()
                 .message(1)
@@ -36,17 +39,25 @@ public class ChildrenService {
     }
 
     //수정
-    public ObjResVO<Integer> updateChildren(ChildrenVO childrenVO, String userId) {
+    public ObjResVO<Integer> updateChild(ChildrenVO childrenVO, String userId) {
         childrenVO.setUserId(userId);
-        childrenMapper.update(childrenVO);
+
+        int updatedRows = childrenMapper.update(childrenVO);
+        if (updatedRows == 0){
+            return ObjResVO.<Integer>builder().message(0).build();
+        }
         return ObjResVO.<Integer>builder().message(1).build();
     }
 
     //자녀정보딜리트
     public ObjResVO<Integer> deleteChildren(ChildrenVO childrenVO, String userId) {
         childrenVO.setUserId(userId);
+        int updatedRows = childrenMapper.update(childrenVO);
+        if (updatedRows == 0){
+            return ObjResVO.<Integer>builder().message(0).build();
+        }
+
         childrenVO.setDelYn("Y");
-        childrenMapper.delete(childrenVO);
         return ObjResVO.<Integer>builder().message(1).build();
     }
 }
