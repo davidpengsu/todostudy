@@ -1,5 +1,6 @@
 package com.todostudy.todo.service;
 
+import com.todostudy.children.vo.ChildrenVO;
 import com.todostudy.cmn.ListResVO;
 import com.todostudy.cmn.ObjResVO;
 import com.todostudy.todo.mapper.TodoMapper;
@@ -38,17 +39,30 @@ public class TodoService {
 
     public ObjResVO<Integer> updateTodo(TodoVO todoVO, String userId) {
         todoVO.setUserId(userId);
-        todoMapper.updateTodo(todoVO);
+
+        int updatedCount = todoMapper.updateTodo(todoVO);
+        if (updatedCount == 0){
+            return ObjResVO.<Integer>builder()
+                    .message(0)
+                    .build();
+        }
         return ObjResVO.<Integer>builder()
                 .message(1)
                 .build();
+
     }
+
 
     public ObjResVO<Integer> deleteTodo(TodoVO todoVO, String userId) {
         todoVO.setUserId(userId);
         todoVO.setDelYn("Y");
-        todoMapper.deleteTodo(todoVO);
 
+        int deletedCount = todoMapper.deleteTodo(todoVO);
+        if (deletedCount == 0){
+            return ObjResVO.<Integer>builder()
+                    .message(0)
+                    .build();
+        }
         return ObjResVO.<Integer>builder()
                 .message(1)
                 .build();

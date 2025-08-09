@@ -2,6 +2,7 @@ package com.todostudy.config;
 
 import com.todostudy.cmn.ObjResVO;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -38,6 +39,17 @@ public class GlobalExceptionHandler {
     }
 
 
+    //db형식같은에러처리
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ObjResVO<String>> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        String databaseErrorMessage = e.getRootCause().getMessage();
 
+        if (databaseErrorMessage != null && databaseErrorMessage.contains("Incorrect datetime value")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ObjResVO.<String>builder().message("날짜형식이 이상함").build());
+        }
 
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ObjResVO.<String>builder().message("저장못하는값임!").build());
+    }
 }

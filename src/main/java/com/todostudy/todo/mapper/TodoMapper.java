@@ -7,8 +7,8 @@ import java.util.List;
 
 @Mapper
 public interface TodoMapper {
-    void savetodo(TodoVO todoVO);
+    int savetodo(TodoVO todoVO);
     List<TodoVO> findByUserId(String userId);
-    void updateTodo(TodoVO todoVO);
-    void deleteTodo(TodoVO todoVO);
+    int updateTodo(TodoVO todoVO);
+    int deleteTodo(TodoVO todoVO);
 }
